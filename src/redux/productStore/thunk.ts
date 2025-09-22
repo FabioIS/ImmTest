@@ -13,13 +13,10 @@ export const fetchProductsThunk = createAsyncThunk<
   }
 >('productStore/fetchProducts', async (_, { rejectWithValue }) => {
   try {
-    console.log('Fetching products...');
     const data = await fetchProducts();
-    console.log('🚀 ~ data:', data);
 
     return data;
   } catch (error) {
-    console.log('🚀 ~ error:', error);
     if (error instanceof Error) {
       return rejectWithValue(error.message);
     }

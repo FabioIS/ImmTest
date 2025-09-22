@@ -17,7 +17,6 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
-  console.log('yeah');
   const iOSEdges: Edges = ['right', 'left', 'top', 'bottom'];
   const androidEdges: Edges = ['right', 'left', 'bottom'];
   const isAndroid = Platform.OS === 'android';
