@@ -1,0 +1,1 @@
+export { CurrencyPriceDisplay } from './CurrencyPriceDisplay';

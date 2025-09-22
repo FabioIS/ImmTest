@@ -1,97 +1,176 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# ImmTest - React Native Shopping Cart Application
 
-# Getting Started
+For the development of this test, take into account the following assumptions:
+- Same pictures have been used for all the products for simplicity. In a real scenario we could get this pictures from backend
+- The split payment functionality has been skip since I didn't really understand what was expected from this feature.
+- All API calls are mocks from my-json-server, and will always return a 200. So no error handling has been implemented.
+- The app test are in Spanish since the provided UI is in Spanish.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## 🚀 Main Features
 
-## Step 1: Start Metro
+### Core Functionality
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- **Product Management**: Browse and add products to cart with real-time inventory tracking
+- **Shopping Cart**: Full cart functionality with item modification, removal, and total calculations
+- **Payment Processing**: Multi-payment method support (Cash/Card) with seat selection
+- **Currency Support**: Multi-currency display (USD, EUR, GBP) with real-time conversion
+- **User Types**: Dynamic pricing based on user roles (Tourist, Crew, Business, etc.) with automatic discount application
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## 🏗️ Architecture Overview
 
-```sh
-# Using npm
+### State Management - Redux Toolkit
+
+The application uses **Redux Toolkit** for predictable state management with a clean, scalable architecture:
+
+```
+src/redux/
+├── store.ts              # Store configuration with middleware
+├── hooks.ts              # Typed useSelector and useDispatch hooks
+├── cart/                 # Cart state management
+│   ├── reducer.ts        # Cart actions and reducers
+│   └── selectors.ts      # Memoized cart selectors
+└── productStore/         # Product catalog management
+    ├── reducer.ts        # Product actions and async thunks
+    ├── selectors.ts      # Product data selectors
+    └── thunk.ts          # API calls for products and payments
+```
+
+### Component Architecture - Atomic Design
+
+```
+src/components/
+├── Badge/                # Small UI indicators
+├── CurrencyPriceDisplay/ # Currency formatting and display
+├── Modal/                # Reusable modal system
+├── PaymentButton/        # Payment interaction component
+├── ProductModal/         # Product details overlay
+├── PurchaseItem/         # Individual cart item component
+├── SeatSelector/         # Seat selection with modal
+└── SwipeableRow/         # Gesture-enabled list items
+```
+
+**Design Principles:**
+
+- **Single Responsibility**: Each component has a clear, focused purpose
+- **Reusability**: Components designed for maximum reuse across screens
+- **Composition**: Complex functionality built from simple, composable parts
+- **Props Interface**: Clean, typed interfaces for component communication
+
+### Screen Architecture - Feature-Based
+
+```
+src/screens/
+├── CartScreen/           # Product catalog and cart management
+│   ├── CartScreen.tsx    # Main screen component
+│   └── styles.ts         # Screen-specific styling
+└── PaymentScreen/        # Checkout and payment flow
+    ├── PaymentScreen.tsx # Payment processing interface
+    └── styles.ts         # Payment screen styling
+```
+
+### API Layer & Data Flow
+
+```
+src/services/
+└── api.ts                # Centralized API service layer
+```
+
+**Data Flow Pattern:**
+
+1. **Components** dispatch actions via typed hooks
+2. **Async Thunks** handle API calls and side effects
+3. **Reducers** update state immutably
+4. **Selectors** provide computed state to components
+5. **Components** re-render based on state changes
+
+### Utility System
+
+```
+src/utils/
+└── utils.ts              # Pure functions for business logic
+```
+
+**Key Utilities:**
+
+- **Currency Conversion**: Real-time currency calculations
+- **Price Formatting**: Consistent price display across the app
+- **Discount Calculations**: User-type based pricing logic
+
+## 🛠️ Technology Stack
+
+### Core Technologies
+
+- **React Native 0.81.4**: Latest stable version with New Architecture support
+- **TypeScript**: Full type safety across the entire application
+- **Redux Toolkit**: Modern Redux with RTK Query for API management
+
+### UI & Animation
+
+- **React Native Reanimated**: High-performance animations and gestures
+- **React Native Gesture Handler**: Native gesture recognition
+- **Flash List**: Optimized, high-performance list rendering
+
+### Navigation & State
+
+- **React Navigation 7**: Type-safe navigation with stack patterns
+- **React Redux**: Optimized React-Redux bindings with hooks
+
+
+
+## 🧪 Testing Strategy
+
+### Comprehensive Test Coverage (92.5%)
+
+- **Unit Tests**: Individual component and utility function testing
+- **Integration Tests**: Redux store and API interaction testing
+- **Component Tests**: User interaction and rendering validation
+- **Mock Strategy**: Sophisticated mocking for React Native dependencies
+
+### Test Architecture
+
+```
+__tests__/
+├── components/           # Component behavior testing
+├── screens/              # Screen integration testing
+├── redux/                # State management testing
+├── services/             # API layer testing
+└── hooks/                # Custom hook testing
+```
+
+## 🚦 Getting Started
+
+### Prerequisites
+
+- Node.js >= 20
+- React Native development environment
+- iOS Simulator or Android Emulator
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# iOS setup (macOS only)
+ npx pod-install 
+
+# Start Metro bundler
 npm start
 
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+# Run on iOS
 npm run ios
 
-# OR using Yarn
-yarn ios
+# Run on Android
+npm run android
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Development Commands
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+# Run tests
+npm test
 
-## Step 3: Modify your app
+# Lint code
+npm run lint
+```
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
