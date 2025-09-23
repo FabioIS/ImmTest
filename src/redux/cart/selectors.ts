@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { Currency } from '../../types/GeneralTypes';
 import { Product } from '../../types/ProductTypes';
-import { convertCurrency } from '../../utils';
+import { convertCurrency, getPriceWithDiscount } from '../../utils';
 import { RootState } from '../store';
 
 export const selectCartItems = (state: RootState): Product[] => state.cart.items;
@@ -29,5 +29,15 @@ export const selectProductAmount = createSelector(
   }
 );
 
-
 export const getUserType = (state: RootState) => state.cart.userType;
+
+export const selectPaymentData = createSelector(
+  [selectCartTotalPrice, selectCartItemsCount, selectCartCurrency, getUserType],
+  (totalPrice, totalAmount, currentCurrency, userType) => ({
+    totalPrice,
+    totalAmount,
+    currentCurrency,
+    userType,
+    totalPriceWithDiscount: getPriceWithDiscount(totalPrice, userType.discount),
+  })
+);

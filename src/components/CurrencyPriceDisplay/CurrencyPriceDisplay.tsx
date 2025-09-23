@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useModal } from '../../hooks/useModal';
 import { setCurrency } from '../../redux/cart/reducer';
@@ -29,13 +29,10 @@ export const CurrencyPriceDisplay = () => {
     };
   });
 
-  const selectCurrency = useCallback(
-    (currency: Currency) => {
-      dispatch(setCurrency(currency));
-      closeModal();
-    },
-    [dispatch, closeModal]
-  );
+  const selectCurrency = (currency: Currency) => {
+    dispatch(setCurrency(currency));
+    closeModal();
+  };
 
   if (totalPrice === 0) {
     return null;

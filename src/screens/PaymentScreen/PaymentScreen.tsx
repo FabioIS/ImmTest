@@ -1,23 +1,12 @@
-import { useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { ProductModal } from '../../components/ProductModal/ProductModal';
 import { SeatSelector } from '../../components/SeatSelector';
 import { SwipeableRow } from '../../components/SwipeableRow/SwipeableRow';
-import { useModal } from '../../hooks/useModal';
-import {
-  deleteProduct,
-  selectCartItems,
-  selectCartTotalPrice,
-  useAppDispatch,
-  useAppSelector,
-} from '../../redux';
-import { getUserType, selectCartCurrency, selectCartItemsCount } from '../../redux/cart/selectors';
-import { makePaymentThunk } from '../../redux/productStore/thunk';
 import { Currency } from '../../types/GeneralTypes';
-import { Product } from '../../types/ProductTypes';
-import { convertCurrency, getPriceWithCurrency, getPriceWithDiscount } from '../../utils';
+import { convertCurrency, getPriceWithCurrency } from '../../utils';
+import { usePaymentScreen } from './hooks';
 import styles from './styles';
 
 const PAYMENT_TYPE = {
@@ -26,46 +15,22 @@ const PAYMENT_TYPE = {
 };
 
 const PaymentScreen = () => {
-  const totalPrice = useAppSelector(selectCartTotalPrice);
-  const currentCurrency = useAppSelector(selectCartCurrency);
-  const userType = useAppSelector(getUserType);
-  const totalPriceWithDiscount = getPriceWithDiscount(totalPrice, userType.discount);
-  const cartItems = useAppSelector(selectCartItems);
-  const totalAmount = useAppSelector(selectCartItemsCount);
-
-  const dispatch = useAppDispatch();
-  const navigation = useNavigation();
-
-  const [selectedSeat, setSelectedSeat] = useState('A');
-  const [selectedRow, setSelectedRow] = useState(1);
-
-  const { isVisible, openModal, closeModal } = useModal();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
-  const handleSwipeComplete = (item: Product) => {
-    dispatch(deleteProduct(item.id));
-  };
-
-  const handleSeatChange = (seat: string, row: number) => {
-    setSelectedSeat(seat);
-    setSelectedRow(row);
-  };
-
-  const handleProductPress = (product: Product) => {
-    setSelectedProduct(product);
-    openModal();
-  };
-
-  const handleCloseModal = () => {
-    closeModal();
-    setSelectedProduct(null);
-  };
-
-  const onPaymentTypePress = (type: string) => {
-    dispatch(makePaymentThunk({ amount: totalPriceWithDiscount, method: type })).then(() => {
-      navigation.navigate('Cart');
-    });
-  };
+  const {
+    totalAmount,
+    cartItems,
+    selectedSeat,
+    selectedRow,
+    isVisible,
+    selectedProduct,
+    currentCurrency,
+    totalPriceWithDiscount,
+    userType,
+    handleSwipeComplete,
+    handleSeatChange,
+    handleProductPress,
+    handleCloseModal,
+    onPaymentTypePress,
+  } = usePaymentScreen();
 
   return (
     <View style={styles.container}>
